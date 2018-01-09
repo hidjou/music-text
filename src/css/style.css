@@ -1,0 +1,16 @@
+body {
+  background-color: #222; }
+
+p {
+  color: white;
+  text-align: justify;
+  font-size: 1.4em; }
+
+p::selection {
+  color: #00ffb4; }
+
+#title p {
+  color: white;
+  font-size: 3rem;
+  font-weight: 600;
+  text-align: center; }
