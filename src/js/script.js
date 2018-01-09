@@ -39,24 +39,53 @@ function SelectText(element) {
 //     });
 // });​
 
-// Change color of the first word of the line
+// // Change color of the first word of the line
+// // #00ffb4 = rgb(0, 255, 180)
+// $(function($){
+//     var lasty;
+//     // target = our text
+//     var $selected = $('#selectme');
+//     //$selectedArray = $selected.text().split(' ');
+//     // separate each word into its own span
+//     $selected.html("<span>" + $selected.text().split(' ').join("</span> <span>") + "</span>");
+//     lasty = -1;
+//     $selected.find('span').each(function(){
+//         var $this = $(this),
+//         top = $this.position().top;
+//         if (top > lasty){
+//             console.log('changing color');
+//             $this.css("color", "rgb(0, 255, 180)");
+//             lasty = top;
+//         }
+//     });
+// });
+
+// Change color of separate lines
 $(function($){
-    var lasty;
-    // target = our text
+    var oldTop, currentTop;
     var $selected = $('#selectme');
-    //$selectedArray = $selected.text().split(' ');
-    // separate each word into its own span
+
+    var gradiant = 0;
+    var color = "rgb(0, 255, " + (180 - gradiant) + ")"
+
     $selected.html("<span>" + $selected.text().split(' ').join("</span> <span>") + "</span>");
-    lasty = -1;
+    oldTop = -1;
+    currentTop = -1;
+    
     $selected.find('span').each(function(){
-        var $this = $(this),
-        top = $this.position().top;
-        if (top > lasty){
-            $this.css("color", "#00ffb4");
-            lasty = top;
+        currentTop = $(this).position().top;
+        if(currentTop > oldTop){
+            oldTop = currentTop;
+            gradiant = gradiant + 10;
+            color = "rgb(0, 255, " + (180 - gradiant) + ")"
+            $(this).css("color", color);
+        } else {
+            $(this).css("color", color);
         }
     });
 });
+
+// Make each line into its own span
 
 // $(function(){
 //     var p = $('p'); 
