@@ -117,6 +117,71 @@ function SelectText(element) {
 //     });//resize
 //     $(window).resize(); //first one
 // });
+// P5 code
+var song;
+var slider;
+var amp;
+var volume;
+var diamater;
+var spans
+//$('#defaultCanvas0).hide();
+
+function setup() {
+  // put setup code here
+  createCanvas(180, 180);
+  song = loadSound('../sound/starlight.mp3', loaded);
+  // createSlider(min, max, default, increment?)
+  slider = createSlider(0, 1, 1, 0.01);
+  song.setVolume(0.5);
+
+  amp = new p5.Amplitude();
+}
+
+function loaded(){
+  console.log('loaded');
+  song.play();
+}
+
+function draw() {
+  // put drawing code here
+  song.setVolume(slider.value());
+  background(51);
+  volume = amp.getLevel();
+  diameter = map(volume, 0, 1, 0, 500);
+  //console.log(volume);
+  fill(255, 0, 255);
+  ellipse(width/2, height/2, diameter, diameter);
+
+  // Get all spans
+  spans = selectAll('span');
+  animateSpans(volume);
+}
+
+function animateSpans(volume){
+    roundedRelativeAmplitude = round((spans.length + 1) * volume); 
+    //console.log(spans.length);
+    for (var i = 1; i < spans.length + 1; i++){
+        if(i >= roundedRelativeAmplitude){
+            $('span.' + i).addClass('green');
+        } else {
+            $('span.' + i).removeClass('green');
+        }
+    }
+}
+
+// function animateSpans(volume){
+//     negativeVol = 1 - volume;
+//     //roundedRelativeAmplitude = round((spans.length + 1) * volume); 
+//     roundedRelativeAmplitude = round((spans.length + 1) * negativeVol); 
+//     console.log(spans.length);
+//     for (var i = 0; i < spans.length; i--){
+//         if(i >= roundedRelativeAmplitude){
+//             $('span.' + i).addClass('green');
+//         } else {
+//             $('span.' + i).removeClass('green');
+//         }
+//     }
+// }
 
 // // Make each line into its own span
 function divideParagraph(element){
@@ -134,11 +199,11 @@ function divideParagraph(element){
                 oldTop = $(this).position().top;
                 lineNumber++;
             }
-            $(this).attr('class', 'line' + lineNumber);
+            $(this).attr('class', lineNumber);
         });//each
         oldTop = -50;
         var previousLine = 1, currentLine = 1;
-        var newText = '<span class="line1">';
+        var newText = '<span class="1">';
         var index = 0;
         $('span', myText).each(function(){
             // The last span
@@ -146,12 +211,12 @@ function divideParagraph(element){
                 newText += $(this).text() + '</span>';
                 return true;
             }
-            currentLine = $(this).attr('class').substring(4);
+            currentLine = $(this).attr('class');
             if(currentLine == previousLine){
                 newText += $(this).text() + ' ';
 
             } else {
-                newText += '</span><span class="line' + currentLine + '">' + $(this).text() + ' ';
+                newText += '</span><span class="' + currentLine + '">' + $(this).text() + ' ';
                 previousLine += 1;
             }
             index +=1;
@@ -170,4 +235,5 @@ function setClassForSelectedText(){
 
 $(document).ready(function(){
     divideParagraph('#selectme');
+    //$('span.1').addClass('green');
 });

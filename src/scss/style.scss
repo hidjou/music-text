@@ -9,10 +9,17 @@ p{
 p::selection{
     color: #00ffb4;
 }
+.green{
+    color: #00ffb4;
+}
 
 #title p{
     color: white;
     font-size: 3rem;
     font-weight: 600;
     text-align: center;
+}
+canvas{
+    position: absolute;
+    bottom: 0;
 }
