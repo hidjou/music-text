@@ -6,7 +6,7 @@ p{
     text-align: justify;
     font-size: 1.4em;
 }
-p::selection{
+*::selection{
     color: #00ffb4;
 }
 .green{

@@ -15,8 +15,25 @@ function setup() {
 }
 
 function loaded(){
-  console.log('loaded');
+  console.log('song loaded!');
   song.play();
+}
+var myColor = "rgb(0, 255, 255)";
+var shade = 255;
+var up = false;
+
+function interpolateShade(){
+    if(!up){
+        shade -= 5;
+    } else {
+        shade += 5;
+    }
+    if(shade <= 0){
+        up = true
+    } else if(shade >= 255){
+        up = false;
+    }
+    return shade;
 }
 
 function draw() {
@@ -31,17 +48,22 @@ function draw() {
 
   // Get all spans
   spans = selectAll('span');
-  console.log(volume);
-  animateSpans(volume);
+  //console.log(volume);
+  animateSpans(volume); // [0.1 : 0.4]
+  
+  setInterval(interpolateShade(), 30);
 }
 
 function animateSpans(volume){
+    // Which one is faster/more efficient 
     roundedRelativeAmplitude = round((spans.length + 1) * volume);
     for (var i = 1; i <= spans.length; i++){
         if(i >= roundedRelativeAmplitude){
-            $('span.' + i).addClass('green');
+            //$('span#' + i).addClass('green');
+            document.getElementById(i).style.color = "rgb(0, 255, " + shade + ")";
         } else {
-            $('span.' + i).removeClass('green');
+            //$('span#' + i).removeClass('green');
+            document.getElementById(i).style.color = "rgb(255, 255, 255)";
         }
     }
 }
@@ -52,7 +74,8 @@ function divideParagraph(element){
     var myText = $(element);
     $(window).resize(function(){
         // Each time window resizes execute
-        myText.html('<span>' + myText.text().split(' ').join('</span> <span>') + '</span>');
+        // Split string where ever there is a space or more between two words
+        myText.html('<span>' + myText.text().split(/\s{1,}/).join('</span> <span>') + '</span>');
         var lineNumber = 0, oldTop = -50, spanArrayLength = 0;
         // Give each span its respective line number
         $('span', myText).each(function(){
@@ -62,11 +85,11 @@ function divideParagraph(element){
                 oldTop = $(this).position().top;
                 lineNumber++;
             }
-            $(this).attr('class', lineNumber);
+            $(this).attr('id', lineNumber);
         });//each
         oldTop = -50;
         var previousLine = 1, currentLine = 1;
-        var newText = '<span class="1">';
+        var newText = '<span id="1">';
         var index = 0;
         $('span', myText).each(function(){
             // The last span
@@ -74,12 +97,12 @@ function divideParagraph(element){
                 newText += $(this).text() + '</span>';
                 return true;
             }
-            currentLine = $(this).attr('class');
+            currentLine = $(this).attr('id');
             if(currentLine == previousLine){
                 newText += $(this).text() + ' ';
 
             } else {
-                newText += '</span><span class="' + currentLine + '">' + $(this).text() + ' ';
+                newText += '</span><span id="' + currentLine + '">' + $(this).text() + ' ';
                 previousLine += 1;
             }
             index +=1;
