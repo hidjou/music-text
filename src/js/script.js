@@ -1,7 +1,8 @@
 // #00ffb4 = rgb(0, 255, 180)
 // P5 vars
-var song, slider, amp, volume, diameter, spans;
+var song, slider, amplitude, volume, diameter, allSpans;
 //$('#defaultCanvas0).hide();
+var spanArrayLength;
 
 function setup() {
   // put setup code here
@@ -10,17 +11,34 @@ function setup() {
   // createSlider(min, max, default, increment?)
   slider = createSlider(0, 1, 1, 0.01);
   song.setVolume(0.5);
+  amplitude = new p5.Amplitude();
+}
 
-  amp = new p5.Amplitude();
+function draw() {
+  // put drawing code here
+  song.setVolume(slider.value());
+  background(51);
+  volume = amplitude.getLevel();
+  diameter = map(volume, 0, 1, 0, 500);
+  //console.log(volume);
+  fill(255, 0, 255);
+  ellipse(width/2, height/2, diameter, diameter);
+
+  // Get all spans
+  allSpans = selectAll('span');
+  //console.log(volume);
+
+  animateSpans(volume); // [0.1 : 0.4]
+  setInterval(interpolateShade(), 30);
 }
 
 function loaded(){
-  console.log('song loaded!');
-  song.play();
-}
-var myColor = "rgb(0, 255, 255)";
-var shade = 255;
-var up = false;
+    console.log('song loaded!');
+    song.play();
+  }
+  var myColor = "rgb(0, 255, 255)";
+  var shade = 255;
+  var up = false;
 
 function interpolateShade(){
     if(!up){
@@ -36,28 +54,10 @@ function interpolateShade(){
     return shade;
 }
 
-function draw() {
-  // put drawing code here
-  song.setVolume(slider.value());
-  background(51);
-  volume = amp.getLevel();
-  diameter = map(volume, 0, 1, 0, 500);
-  //console.log(volume);
-  fill(255, 0, 255);
-  ellipse(width/2, height/2, diameter, diameter);
-
-  // Get all spans
-  spans = selectAll('span');
-  //console.log(volume);
-  animateSpans(volume); // [0.1 : 0.4]
-  
-  setInterval(interpolateShade(), 30);
-}
-
 function animateSpans(volume){
     // Which one is faster/more efficient 
-    roundedRelativeAmplitude = round((spans.length + 1) * volume);
-    for (var i = 1; i <= spans.length; i++){
+    roundedRelativeAmplitude = round((allSpans.length + 1) * volume);
+    for (var i = 1; i <= allSpans.length; i++){
         if(i >= roundedRelativeAmplitude){
             //$('span#' + i).addClass('green');
             document.getElementById(i).style.color = "rgb(0, 255, " + shade + ")";
@@ -76,38 +76,32 @@ function divideParagraph(element){
         // Each time window resizes execute
         // Split string where ever there is a space or more between two words
         myText.html('<span>' + myText.text().split(/\s{1,}/).join('</span> <span>') + '</span>');
-        var lineNumber = 0, oldTop = -50, spanArrayLength = 0;
+        var lineNumber = 1, oldLine = 0, oldTop = -50;
+        var spansCount = myText.text().split(/\s{1,}/).length;
+        var newNewText = '<span id="1">';
         // Give each span its respective line number
-        $('span', myText).each(function(){
-            spanArrayLength += 1;
-
+        $('span', myText).each(function(index, myText){
+            // First span
+            if(index == 0){
+                oldTop = $(this).position().top;
+                newNewText += $(this).text() + ' ';
+                return true
+            // Last span
+            }else if(index == spansCount - 1){
+                newNewText += $(this).text() + '</span>';
+                return true;
+            }
+            // New line
             if($(this).position().top != oldTop){
                 oldTop = $(this).position().top;
                 lineNumber++;
-            }
-            $(this).attr('id', lineNumber);
-        });//each
-        oldTop = -50;
-        var previousLine = 1, currentLine = 1;
-        var newText = '<span id="1">';
-        var index = 0;
-        $('span', myText).each(function(){
-            // The last span
-            if(index >= spanArrayLength - 1){
-                newText += $(this).text() + '</span>';
-                return true;
-            }
-            currentLine = $(this).attr('id');
-            if(currentLine == previousLine){
-                newText += $(this).text() + ' ';
-
+                newNewText += '</span><span id ="' + lineNumber + '">' + $(this).text() + ' ';
+            // Same line
             } else {
-                newText += '</span><span id="' + currentLine + '">' + $(this).text() + ' ';
-                previousLine += 1;
+                newNewText += $(this).text() + ' ';
             }
-            index +=1;
-        })//each
-        myText.html(newText);
+        });//each
+        myText.html(newNewText);
     }).delay(50);//resize
     $(window).resize(); //first run
 }
