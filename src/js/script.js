@@ -1,6 +1,7 @@
 // #00ffb4 = rgb(0, 255, 180)
 // P5 vars
 var song, slider, amplitude, volume, diameter, allSpans;
+var newAmplitude;
 //$('#defaultCanvas0).hide();
 var spanArrayLength;
 
@@ -12,7 +13,10 @@ function setup() {
   slider = createSlider(0, 1, 1, 0.01);
   song.setVolume(0.5);
   amplitude = new p5.Amplitude();
+  newAmplitude = new p5.FFT(0.8, 16);
 }
+
+var spectrum;
 
 function draw() {
   // put drawing code here
@@ -28,14 +32,22 @@ function draw() {
   allSpans = selectAll('span');
   //console.log(volume);
 
-  animateSpans(volume); // [0.1 : 0.4]
+  spectrum = newAmplitude.analyze();
+  console.log(spectrum);
+
+//   for(var i = 0; i < spectrum.length; i++){
+//       console.log(spectrum)
+//   }
+
+  animateSpans(spectrum[6]); // [0.1 : 0.4]
   setInterval(interpolateShade(), 30);
 }
 
 function loaded(){
     console.log('song loaded!');
     song.play();
-  }
+}
+
   var myColor = "rgb(0, 255, 255)";
   var shade = 255;
   var up = false;
